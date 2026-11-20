@@ -13,3 +13,6 @@ design-qa.md
 /public/models/
 /public/vision/
 /android/out/
+/build/
+/ios/**/xcuserdata/
+*.xcuserstate

@@ -35,3 +35,11 @@ scripts/build-android.sh
 ```
 
 The script signs the APK with the local key in `~/.local/share/void-studio/android-signing` unless `VOID_ANDROID_SIGNING_DIR` is set. Keep the key under your control and reuse it for Android app updates. The default output is `android/out/void-studio.apk`.
+
+## iPhone and iPad
+
+The Xcode app targets iOS and iPadOS 17 or newer. **Studio** opens the existing camera studio. **LiDAR** opens the native rear camera and uses ARKit's scene depth for a heat map, a distance reading where you tap, and a veil that darkens surfaces past the selected distance. The LiDAR mode can share JPEGs and silent MP4 clips. Studio offers the original gesture effects and microphone recording.
+
+Rear LiDAR is available on the iPhone 14 Pro Max and both M2 iPad Pro sizes. The app checks ARKit support at runtime. The simulator and devices without a depth sensor can still open Studio. These distance readings are for creative framing and effects.
+
+The [Apple build workflow](https://github.com/jdmiami/Void-studio/actions/workflows/apple.yml) compiles both device and simulator apps on a macOS runner. An unsigned device build cannot be installed on a phone or iPad. To run on hardware, open `ios/VoidStudio.xcodeproj` in Xcode, choose your Apple team under **Signing & Capabilities**, connect the device, and run the VoidStudio scheme. TestFlight distribution requires an Apple Developer account and a signed archive.

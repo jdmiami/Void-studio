@@ -26,7 +26,7 @@ The vision tasks use Google's [MediaPipe Hand Landmarker](https://ai.google.dev/
 
 Open the [live studio](https://void-studio-liart.vercel.app) in Android Chrome and tap **Install**. The installed web app requests camera access on first launch. In a regular browser tab, tap **Use camera** when you're ready.
 
-The signed [Android APK](https://github.com/jdmiami/Void-studio/releases/download/v1.1.0/void-studio.apk) runs on Android 10 and newer. Open the APK to install it, then grant camera access when Android asks. The APK includes the studio and vision models for offline use. It requests microphone access when recording with microphone audio enabled, and saves exports in **Downloads → VOID Studio**.
+The signed [Android APK](https://raw.githubusercontent.com/jdmiami/Void-studio/android-builds/v1.1.0/void-studio.apk) runs on Android 10 and newer. Open the APK to install it, then grant camera access when Android asks. The APK includes the studio and vision models for offline use. It requests microphone access when recording with microphone audio enabled, and saves exports in **Downloads → VOID Studio**.
 
 To build the Android package locally, install SDK Platform 35 and Android SDK Build Tools 35.0.0. Point `ANDROID_SDK_ROOT` at the SDK and run:
 

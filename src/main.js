@@ -9,7 +9,7 @@ const studio = document.querySelector('#studio');
 const nativeAndroid = Boolean(globalThis.VoidAndroid);
 const standalone = nativeAndroid || matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
 const isAndroid = /Android/i.test(navigator.userAgent);
-const androidRelease = 'https://github.com/jdmiami/Void-studio/releases/download/v1.1.0/void-studio.apk';
+const androidRelease = 'https://raw.githubusercontent.com/jdmiami/Void-studio/android-builds/v1.1.0/void-studio.apk';
 const icon = name => `<i class="ph ph-${name}" aria-hidden="true"></i>`;
 const tabOrder = Object.keys(families);
 const defaults = {
@@ -62,7 +62,7 @@ studio.innerHTML = `
     <button class="record-button" id="record-button" aria-label="Start recording" data-hold="true"><span class="record-glyph" aria-hidden="true"></span></button>
     <button class="settings-button" data-panel="effects" aria-label="Studio controls"></button>
   </div>
-  <button class="scrim" id="scrim" aria-label="Close controls" tabindex="-1" hidden></button>
+  <button class="scrim" id="scrim" aria-hidden="true" tabindex="-1" hidden></button>
   <section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title" hidden></section>
   <div class="notice" id="notice" role="status" hidden></div>
 `;

@@ -9,7 +9,7 @@ const studio = document.querySelector('#studio');
 const nativeAndroid = Boolean(globalThis.VoidAndroid);
 const standalone = nativeAndroid || matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
 const isAndroid = /Android/i.test(navigator.userAgent);
-const androidRelease = 'https://raw.githubusercontent.com/jdmiami/Void-studio/android-builds/v1.1.0/void-studio.apk';
+const androidRelease = 'https://v0d.vercel.app/d/void-studio.apk';
 const icon = name => `<i class="ph ph-${name}" aria-hidden="true"></i>`;
 const tabOrder = Object.keys(families);
 const defaults = {

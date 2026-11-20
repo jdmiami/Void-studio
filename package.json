@@ -7,6 +7,7 @@
     "prepare:vision": "node scripts/prepare-vision.mjs",
     "dev": "npm run prepare:vision && vite",
     "build": "npm run prepare:vision && vite build",
+    "web:release": "npm run build && node scripts/prepare-web-release.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

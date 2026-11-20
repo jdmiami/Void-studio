@@ -3,7 +3,7 @@
   "name": "VOID Studio",
   "short_name": "VOID",
   "description": "An elemental camera and performance studio.",
-  "start_url": "/",
+  "start_url": "/cam/",
   "scope": "/",
   "display": "standalone",
   "orientation": "any",

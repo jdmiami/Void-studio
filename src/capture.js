@@ -61,11 +61,37 @@ export function canvasStream(canvas, fps, audioTracks = []) {
   return stream;
 }
 
-export function downloadBlob(blob, basename) {
+export async function downloadBlob(blob, basename) {
+  const extension = blob.type.includes('mp4') ? 'mp4' : 'webm';
+  const filename = `${basename}.${extension}`;
+  const android = globalThis.VoidAndroid;
+  if (android) {
+    const download = android.beginDownload(filename, `video/${extension}`);
+    if (!download) throw new Error('Could not open Downloads for this video.');
+    let complete = false;
+    try {
+      const chunkSize = 192 * 1024;
+      for (let offset = 0; offset < blob.size; offset += chunkSize) {
+        const chunk = blob.slice(offset, offset + chunkSize);
+        const data = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result.split(',')[1]);
+          reader.onerror = () => reject(reader.error);
+          reader.readAsDataURL(chunk);
+        });
+        if (!android.appendDownload(download, data)) throw new Error('The video could not be written to Downloads.');
+      }
+      complete = true;
+    } finally {
+      const saved = android.finishDownload(download, complete);
+      if (complete && !saved) throw new Error('The video could not be saved to Downloads.');
+    }
+    return;
+  }
   const href = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = href;
-  link.download = `${basename}.${blob.type.includes('mp4') ? 'mp4' : blob.type.includes('json') ? 'json' : 'webm'}`;
+  link.download = filename;
   link.click();
   setTimeout(() => URL.revokeObjectURL(href), 45000);
 }

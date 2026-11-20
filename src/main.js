@@ -6,6 +6,10 @@ import { VisionTracker } from './tracking.js';
 import { canvasStream, downloadBlob, frameAt, getTakes, makeRecorder, removeTake, saveTake } from './capture.js';
 
 const studio = document.querySelector('#studio');
+const nativeAndroid = Boolean(globalThis.VoidAndroid);
+const standalone = nativeAndroid || matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+const isAndroid = /Android/i.test(navigator.userAgent);
+const androidRelease = 'https://github.com/jdmiami/Void-studio/releases/download/v1.1.0/void-studio.apk';
 const icon = name => `<i class="ph ph-${name}" aria-hidden="true"></i>`;
 const tabOrder = Object.keys(families);
 const defaults = {
@@ -23,9 +27,14 @@ const labelFor = key => key.charAt(0).toUpperCase() + key.slice(1);
 studio.innerHTML = `
   <header class="topbar">
     <div class="brand"><img src="/art/wordmark.webp" alt="VOID Studio"></div>
-    <button id="status" class="status" data-panel="camera" aria-label="Camera status and settings">
-      <span class="status-dot" aria-hidden="true"></span><span id="status-label">Demo</span>
-    </button>
+    <div class="top-actions">
+      <button id="install-button" class="status install-button" data-panel="install" aria-label="Install VOID Studio" hidden>
+        ${icon('download-simple')}<span>Install</span>
+      </button>
+      <button id="status" class="status" aria-label="Use live camera">
+        <span class="status-dot" aria-hidden="true"></span><span id="status-label">Use camera</span>
+      </button>
+    </div>
   </header>
   <div class="stage" id="stage">
     <canvas id="preview" aria-label="Elemental camera preview"></canvas>
@@ -106,7 +115,7 @@ function updateStatus(now = performance.now()) {
     : countdownUntil ? 'Countdown'
     : preparing ? 'Preparing'
     : cameraState === 'opening' ? 'Opening'
-    : cameraState !== 'live' ? 'Demo'
+    : cameraState !== 'live' ? 'Use camera'
     : modelState === 'loading' ? 'Loading AI'
     : modelState === 'error' ? 'Camera live'
     : !settings.gestures ? 'Camera live'
@@ -115,6 +124,7 @@ function updateStatus(now = performance.now()) {
     : (cameraState === 'opening' || modelState === 'loading' || countdownUntil || preparing) ? 'pending' : 'ready';
   if (uiStatus !== label) {
     $('#status-label').textContent = label;
+    $('#status').setAttribute('aria-label', cameraState === 'demo' ? 'Use live camera' : 'Camera status and settings');
     uiStatus = label;
   }
   studio.dataset.state = state;
@@ -255,7 +265,9 @@ async function startCamera(nextFacing = facing, deviceId) {
         stopCamera();
       }
     } else stopCamera();
-    const message = error.name === 'NotAllowedError' ? 'Camera permission was denied. Enable it in your browser settings.'
+    const denied = nativeAndroid ? 'Camera permission was denied. Allow it in Android Settings.'
+      : 'Camera permission was denied. Enable it in your browser settings.';
+    const message = error.name === 'NotAllowedError' ? denied
       : error.name === 'NotFoundError' ? 'No camera was found on this device.'
       : 'The camera could not open. Try again or use Demo.';
     notify(message);
@@ -448,7 +460,7 @@ const action = (name, label, glyph, extra = '') => `<button class="action ${extr
   ${glyph ? icon(glyph) : ''}${label}
 </button>`;
 
-const panelTitles = { effects: 'Effects', camera: 'Camera', gestures: 'Gestures', quality: 'Performance', capture: 'Capture', takes: 'Takes', editor: 'Take' };
+const panelTitles = { effects: 'Effects', camera: 'Camera', gestures: 'Gestures', quality: 'Performance', capture: 'Capture', takes: 'Takes', editor: 'Take', install: 'Install VOID Studio' };
 const panelLinks = ['effects', 'camera', 'gestures', 'quality', 'takes'];
 const panelTabLabels = { ...panelTitles, quality: 'Quality' };
 
@@ -519,7 +531,14 @@ function panelContent() {
         </div>
         <button class="action" data-open="${take.id}" aria-label="Open take">${icon('play')} Open</button>
       </div>`).join('') : '<p>Your recorded takes appear here.</p>'}
-      <div class="action-row">${action('install', 'Install VOID Studio', 'download-simple')}</div>`;
+      ${standalone ? '' : `<div class="action-row"><button class="action" data-panel="install">
+        ${icon('download-simple')} Install VOID Studio
+      </button></div>`}`;
+    case 'install':
+      return `<p>Add the camera studio to your home screen.</p>
+        <div class="action-row">${action('install', 'Install web app', 'download-simple', 'primary')}
+          ${isAndroid ? `<a class="action" href="${androidRelease}">${icon('android-logo')} Download Android APK</a>` : ''}
+        </div>`;
     default:
       return '';
   }
@@ -536,7 +555,7 @@ function renderPanel(focus = true) {
     <h1 id="sheet-title">${panelTitles[panel]}</h1>
     <button class="icon-button" data-action="close" aria-label="Close controls">${icon('x')}</button>
   </div>
-  ${panel !== 'capture' ? `<nav class="panel-tabs" aria-label="Studio settings">${panelLinks.map(name =>
+  ${panel !== 'capture' && panel !== 'install' ? `<nav class="panel-tabs" aria-label="Studio settings">${panelLinks.map(name =>
     `<button class="pill" data-panel="${name}" aria-pressed="${String(panel === name)}">${panelTabLabels[name]}</button>`).join('')}</nav>` : ''}
   ${panelContent()}`;
   if (takeSession || preparing || countdownUntil) {
@@ -709,7 +728,7 @@ async function exportEditedTake(button) {
     syncPlayButton();
     const blob = await result;
     if (editor === activeEditor) {
-      downloadBlob(blob, 'VOID-export');
+      await downloadBlob(blob, 'VOID-export');
       notify('Export ready.');
     }
   } catch (error) { notify(error.message || 'Export failed.'); }
@@ -729,9 +748,24 @@ async function exportEditedTake(button) {
 }
 
 window.addEventListener('beforeinstallprompt', event => {
+  if (standalone) return;
   event.preventDefault();
   installPrompt = event;
+  $('#install-button').hidden = false;
 });
+window.addEventListener('appinstalled', () => {
+  installPrompt = null;
+  $('#install-button').hidden = true;
+});
+
+async function downloadTake(basename) {
+  try {
+    await downloadBlob(currentTake.blob, basename);
+    if (nativeAndroid) notify('Video saved to Downloads.');
+  } catch (error) {
+    notify(error.message || 'The video could not be saved.');
+  }
+}
 
 const actions = {
   close: closePanel,
@@ -740,8 +774,8 @@ const actions = {
   demo: () => { if (!takeSession && !preparing) { stopCamera(); renderPanel(false); } },
   'retry-models': () => { loadVision(); closePanel(); },
   'play-take': playEditor,
-  'download-clean': () => downloadBlob(currentTake.blob, 'VOID-original'),
-  download: () => downloadBlob(currentTake.blob, 'VOID-take'),
+  'download-clean': () => downloadTake('VOID-original'),
+  download: () => downloadTake('VOID-take'),
   export: exportEditedTake,
   delete: async button => {
     if (!button.dataset.confirm) {
@@ -773,6 +807,10 @@ studio.addEventListener('click', event => {
   const target = event.target.closest('button');
   if (!target || target.disabled) return;
   const data = target.dataset;
+  if (target.id === 'status') {
+    if (cameraState === 'demo' && !takeSession && !countdownUntil && !preparing) return startCamera();
+    return openPanel('camera');
+  }
   if (target.id === 'record-button') return handleRecord();
   if (target.id === 'camera-button') return flipCamera();
   if (target.id === 'scrim') return closePanel();
@@ -825,7 +863,7 @@ studio.addEventListener('change', event => {
 studio.addEventListener('keydown', event => {
   if (event.key === 'Escape' && panel) closePanel();
   if (event.key !== 'Tab' || !panel) return;
-  const focusable = [...sheet.querySelectorAll('button:not(:disabled), input, select')];
+  const focusable = [...sheet.querySelectorAll('button:not(:disabled), input, select, a[href]')];
   const first = focusable[0];
   const last = focusable.at(-1);
   if (event.shiftKey && document.activeElement === first) {
@@ -905,6 +943,7 @@ function tick(now) {
 
 syncSettings();
 setRecordUi('');
+$('#install-button').hidden = standalone || !isAndroid;
 getTakes().then(saved => {
   const existing = new Set(takes.map(take => take.id));
   takes = [...takes, ...saved.filter(take => !existing.has(take.id))].sort((a, b) => b.created - a.created);
@@ -912,6 +951,20 @@ getTakes().then(saved => {
 }).catch(() => {});
 requestAnimationFrame(tick);
 
-if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+if (import.meta.env.PROD && !nativeAndroid && 'serviceWorker' in navigator) {
   navigator.serviceWorker.register('/sw.js').catch(error => console.warn('Offline installation is unavailable', error));
 }
+
+async function openCameraOnLaunch() {
+  if (standalone) {
+    await startCamera();
+    return;
+  }
+  try {
+    const permission = await navigator.permissions.query({ name: 'camera' });
+    if (permission.state === 'granted') await startCamera();
+  } catch {
+    // The status button can open the camera on browsers without this permission query.
+  }
+}
+void openCameraOnLaunch();

@@ -43,6 +43,9 @@ button:focus-visible, input:focus-visible, select:focus-visible, .gesture-target
 }
 .brand { display: flex; align-items: center; height: 44px; }
 .brand img { display: block; width: clamp(62px, 16.5vw, 83px); }
+.top-actions { display: flex; align-items: center; gap: 13px; }
+.install-button { color: #b4e4eb; }
+.install-button i { font-size: 15px; }
 .status {
   display: flex;
   align-items: center;
@@ -384,6 +387,8 @@ button:focus-visible, input:focus-visible, select:focus-visible, .gesture-target
 .pill[aria-pressed="true"], .action.primary { background: #8aeefa; color: #051115; border-color: #a7f2fb; font-weight: 700; }
 .action.danger { color: #ffaca8; }
 .action { display: inline-flex; gap: 7px; align-items: center; justify-content: center; }
+.action[href] { color: inherit; text-decoration: none; }
+.action[href]:focus-visible { outline: 2px solid #87f5ff; outline-offset: 3px; }
 .action:active, .pill:active, .icon-button:active { scale: .96; }
 .action-row { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
 .action-row .action { flex: 1 1 auto; }

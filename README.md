@@ -21,3 +21,17 @@ Serve the contents of `dist/` at the root of an HTTPS origin to use the camera o
 The first development start or build downloads the pinned model files and verifies their checksums. The built site serves the models and runtime from its own origin.
 
 The vision tasks use Google's [MediaPipe Hand Landmarker](https://ai.google.dev/edge/mediapipe/solutions/vision/hand_landmarker) and [Pose Landmarker](https://ai.google.dev/edge/mediapipe/solutions/vision/pose_landmarker) models and run locally.
+
+## Android apps
+
+Open the [live studio](https://void-studio-liart.vercel.app) in Android Chrome and tap **Install**. The installed web app requests camera access on first launch. In a regular browser tab, tap **Use camera** when you're ready.
+
+The signed [Android APK](https://github.com/jdmiami/Void-studio/releases/download/v1.1.0/void-studio.apk) runs on Android 10 and newer. Open the APK to install it, then grant camera access when Android asks. The APK includes the studio and vision models for offline use. It requests microphone access when recording with microphone audio enabled, and saves exports in **Downloads → VOID Studio**.
+
+To build the Android package locally, install SDK Platform 35 and Android SDK Build Tools 35.0.0. Point `ANDROID_SDK_ROOT` at the SDK and run:
+
+```sh
+scripts/build-android.sh
+```
+
+The script signs the APK with the local key in `~/.local/share/void-studio/android-signing` unless `VOID_ANDROID_SIGNING_DIR` is set. Keep the key under your control and reuse it for Android app updates. The default output is `android/out/void-studio.apk`.

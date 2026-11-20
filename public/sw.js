@@ -1,4 +1,4 @@
-const CACHE = 'void-studio-v1';
+const CACHE = 'void-studio-v2';
 const shellUrls = ['/', '/manifest.webmanifest', '/icon-192.png', '/icon-512.png',
   '/art/performer.webp', '/art/aperture.webp', '/art/dock.webp', '/art/wordmark.webp', '/art/portal-energy.webp'];
 

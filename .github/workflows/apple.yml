@@ -34,6 +34,73 @@ jobs:
           xcodebuild -project ios/VoidStudio.xcodeproj -scheme VoidStudio
           -configuration Debug -destination 'generic/platform=iOS Simulator'
           -derivedDataPath build/apple-simulator CODE_SIGNING_ALLOWED=NO build
+      - name: Select an iPad Pro simulator
+        id: ipad
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import re
+          import subprocess
+
+          def simctl(*args):
+              return subprocess.check_output(["xcrun", "simctl", *args], text=True)
+
+          def is_m2(name):
+              return name.startswith("iPad Pro") and (
+                  ("11-inch" in name and "4th generation" in name)
+                  or ("12.9-inch" in name and "6th generation" in name)
+                  or "M2" in name
+              )
+
+          catalog = json.loads(simctl("list", "-j"))
+          runtimes = sorted(
+              (r for r in catalog["runtimes"] if r["isAvailable"] and r["name"].startswith("iOS ")),
+              key=lambda r: tuple(map(int, re.findall(r"\d+", r["version"]))),
+              reverse=True,
+          )
+          if not runtimes:
+              raise SystemExit("No available iOS Simulator runtime.")
+          preferred = [d for d in catalog["devicetypes"] if is_m2(d["name"])]
+          runtime = runtimes[0]
+          for device in preferred:
+              created = subprocess.run(
+                  ["xcrun", "simctl", "create", "VOID iPad Pro M2", device["identifier"], runtime["identifier"]],
+                  capture_output=True, text=True,
+              )
+              if created.returncode == 0:
+                  selected = {"name": device["name"], "udid": created.stdout.strip()}
+                  break
+          else:
+              available = [
+                  d for runtime in runtimes
+                  for d in catalog["devices"].get(runtime["identifier"], [])
+                  if d["isAvailable"] and d["name"].startswith("iPad Pro")
+              ]
+              if not available:
+                  raise SystemExit("No compatible iPad Pro simulator.")
+              selected = next((d for d in available if is_m2(d["name"])), available[0])
+
+          print(f"Validating on {selected['name']} simulator ({selected['udid']})")
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+              output.write(f"id={selected['udid']}\n")
+          PY
+      - name: Run Swift validation on iPad Pro
+        env:
+          IPAD_SIMULATOR_ID: ${{ steps.ipad.outputs.id }}
+        run: >
+          xcodebuild -project ios/VoidStudio.xcodeproj -scheme VoidStudio
+          -configuration Debug -destination "platform=iOS Simulator,id=$IPAD_SIMULATOR_ID"
+          -derivedDataPath build/apple-simulator -resultBundlePath build/iPad-Validation.xcresult
+          -parallel-testing-enabled NO
+          -only-testing:VoidStudioUITests/LiDARValidationTests/testSimulatorShowsLiDARUnavailableAndReturnsToStudio
+          test
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: ipad-validation
+          path: build/iPad-Validation.xcresult
+          if-no-files-found: ignore
       - name: Package builds
         run: |
           mkdir -p build/apple-artifacts

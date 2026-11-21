@@ -47,3 +47,9 @@ Rear LiDAR is available on the iPhone 14 Pro Max and both M2 iPad Pro sizes. The
 The [Apple build workflow](https://github.com/jdmiami/Void-studio/actions/workflows/apple.yml) compiles both device and simulator apps on a macOS runner. An unsigned device build cannot be installed on a phone or iPad. To run on hardware, open `ios/VoidStudio.xcodeproj` in Xcode, choose your Apple team under **Signing & Capabilities**, connect the device, and run the VoidStudio scheme. TestFlight distribution requires an Apple Developer account and a signed archive.
 
 The public launcher and downloads are assembled with `npm run web:release`. This copies the web camera to `/cam/`, verifies the native release packages and adds the downloadable web and source archives.
+
+### Validate LiDAR on a connected iPad Pro
+
+Open the project from the latest GitHub source and enable **Automatically manage signing** with the same Apple team for both **VoidStudio** and **VoidStudioUITests**. If either bundle identifier is unavailable, assign it a unique identifier under your account. Select your connected M2 iPad Pro in the **VoidStudio** scheme.
+
+Aim the rear camera at a well-lit, matte surface 1–3 metres away. Open Xcode’s **Test navigator** and run **testPhysicalLiDARMeasuresAndRecords**, or press **⌘U**. Grant camera access if prompted. The Swift test waits for a native depth frame, taps the preview and checks for a positive distance, then records a clip and checks that it can be shared. The simulator test skips the physical sensor check. It instead verifies that the app shows LiDAR as unavailable and lets you return to Studio.

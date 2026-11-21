@@ -12,6 +12,7 @@
     100000000000000000000014 /* DepthMovie.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000024 /* DepthMovie.swift */; };
     100000000000000000000015 /* LiDARStudio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000025 /* LiDARStudio.swift */; };
     100000000000000000000016 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000026 /* Assets.xcassets */; };
+    200000000000000000000011 /* LiDARValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000021; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,16 +24,19 @@
     100000000000000000000026 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
     100000000000000000000027 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
     100000000000000000000028 /* VoidStudio.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VoidStudio.app; sourceTree = BUILT_PRODUCTS_DIR; };
+    200000000000000000000021 /* LiDARValidationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiDARValidationTests.swift; sourceTree = "<group>"; };
+    200000000000000000000028 /* VoidStudioUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VoidStudioUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
     100000000000000000000032 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+    200000000000000000000032 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
     100000000000000000000041 = {
       isa = PBXGroup;
-      children = (100000000000000000000042 /* VoidStudio */, 100000000000000000000043 /* Products */);
+      children = (100000000000000000000042 /* VoidStudio */, 200000000000000000000042 /* VoidStudioUITests */, 100000000000000000000043 /* Products */);
       sourceTree = "<group>";
     };
     100000000000000000000042 /* VoidStudio */ = {
@@ -51,8 +55,14 @@
     };
     100000000000000000000043 /* Products */ = {
       isa = PBXGroup;
-      children = (100000000000000000000028 /* VoidStudio.app */);
+      children = (100000000000000000000028 /* VoidStudio.app */, 200000000000000000000028 /* VoidStudioUITests.xctest */);
       name = Products;
+      sourceTree = "<group>";
+    };
+    200000000000000000000042 /* VoidStudioUITests */ = {
+      isa = PBXGroup;
+      children = (200000000000000000000021 /* LiDARValidationTests.swift */);
+      path = VoidStudioUITests;
       sourceTree = "<group>";
     };
 /* End PBXGroup section */
@@ -69,6 +79,17 @@
       productReference = 100000000000000000000028 /* VoidStudio.app */;
       productType = "com.apple.product-type.application";
     };
+    200000000000000000000051 /* VoidStudioUITests */ = {
+      isa = PBXNativeTarget;
+      buildConfigurationList = 200000000000000000000072;
+      buildPhases = (200000000000000000000031 /* Sources */, 200000000000000000000032 /* Frameworks */, 200000000000000000000033 /* Resources */);
+      buildRules = ();
+      dependencies = (200000000000000000000062 /* VoidStudio dependency */);
+      name = VoidStudioUITests;
+      productName = VoidStudioUITests;
+      productReference = 200000000000000000000028 /* VoidStudioUITests.xctest */;
+      productType = "com.apple.product-type.bundle.ui-testing";
+    };
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -78,7 +99,10 @@
         BuildIndependentTargetsInParallel = YES;
         LastSwiftUpdateCheck = 1600;
         LastUpgradeCheck = 1600;
-        TargetAttributes = { 100000000000000000000051 = {CreatedOnToolsVersion = 16.0; }; };
+        TargetAttributes = {
+          100000000000000000000051 = {CreatedOnToolsVersion = 16.0; };
+          200000000000000000000051 = {CreatedOnToolsVersion = 16.0; TestTargetID = 100000000000000000000051; };
+        };
       };
       buildConfigurationList = 100000000000000000000071;
       compatibilityVersion = "Xcode 14.0";
@@ -89,7 +113,7 @@
       productRefGroup = 100000000000000000000043 /* Products */;
       projectDirPath = "";
       projectRoot = "";
-      targets = (100000000000000000000051 /* VoidStudio */);
+      targets = (100000000000000000000051 /* VoidStudio */, 200000000000000000000051 /* VoidStudioUITests */);
     };
 /* End PBXProject section */
 
@@ -100,6 +124,7 @@
       files = (100000000000000000000016 /* Assets.xcassets in Resources */);
       runOnlyForDeploymentPostprocessing = 0;
     };
+    200000000000000000000033 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -115,7 +140,31 @@
       );
       runOnlyForDeploymentPostprocessing = 0;
     };
+    200000000000000000000031 /* Sources */ = {
+      isa = PBXSourcesBuildPhase;
+      buildActionMask = 2147483647;
+      files = (200000000000000000000011 /* LiDARValidationTests.swift in Sources */);
+      runOnlyForDeploymentPostprocessing = 0;
+    };
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXContainerItemProxy section */
+    200000000000000000000061 = {
+      isa = PBXContainerItemProxy;
+      containerPortal = 100000000000000000000061 /* Project object */;
+      proxyType = 1;
+      remoteGlobalIDString = 100000000000000000000051;
+      remoteInfo = VoidStudio;
+    };
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXTargetDependency section */
+    200000000000000000000062 /* VoidStudio dependency */ = {
+      isa = PBXTargetDependency;
+      target = 100000000000000000000051 /* VoidStudio */;
+      targetProxy = 200000000000000000000061;
+    };
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
     100000000000000000000081 /* Debug */ = {
@@ -178,6 +227,33 @@
       };
       name = Release;
     };
+    200000000000000000000083 /* Debug */ = {
+      isa = XCBuildConfiguration;
+      buildSettings = {
+        CODE_SIGN_STYLE = Automatic;
+        GENERATE_INFOPLIST_FILE = YES;
+        PRODUCT_BUNDLE_IDENTIFIER = studio.voidcamera.apple.UITests;
+        PRODUCT_NAME = "$(TARGET_NAME)";
+        SWIFT_VERSION = 5.0;
+        TARGETED_DEVICE_FAMILY = "1,2";
+        TEST_TARGET_NAME = VoidStudio;
+      };
+      name = Debug;
+    };
+    200000000000000000000084 /* Release */ = {
+      isa = XCBuildConfiguration;
+      buildSettings = {
+        CODE_SIGN_STYLE = Automatic;
+        GENERATE_INFOPLIST_FILE = YES;
+        PRODUCT_BUNDLE_IDENTIFIER = studio.voidcamera.apple.UITests;
+        PRODUCT_NAME = "$(TARGET_NAME)";
+        SWIFT_VERSION = 5.0;
+        TARGETED_DEVICE_FAMILY = "1,2";
+        TEST_TARGET_NAME = VoidStudio;
+      };
+      name = Release;
+    };
+
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -190,6 +266,12 @@
     100000000000000000000072 = {
       isa = XCConfigurationList;
       buildConfigurations = (100000000000000000000083 /* Debug */, 100000000000000000000084 /* Release */);
+      defaultConfigurationIsVisible = 0;
+      defaultConfigurationName = Release;
+    };
+    200000000000000000000072 = {
+      isa = XCConfigurationList;
+      buildConfigurations = (200000000000000000000083 /* Debug */, 200000000000000000000084 /* Release */);
       defaultConfigurationIsVisible = 0;
       defaultConfigurationName = Release;
     };

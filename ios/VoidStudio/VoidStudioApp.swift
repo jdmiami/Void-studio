@@ -30,7 +30,7 @@ private struct StudioRoot: View {
                     }
                 )) {
                     Text("Studio").tag(false)
-                    Label("LiDAR", systemImage: "viewfinder").tag(true)
+                    Text("LiDAR").tag(true)
                 }
                 .pickerStyle(.segmented)
                 .frame(maxWidth: 230)

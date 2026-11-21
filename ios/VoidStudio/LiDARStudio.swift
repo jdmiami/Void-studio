@@ -22,6 +22,8 @@ struct LiDARStudio: View {
                             .frame(width: viewport.size.width, height: viewport.size.height)
                             .clipped()
                             .accessibilityLabel("Rear LiDAR camera preview")
+                            .accessibilityHidden(false)
+                            .accessibilityIdentifier("lidar-preview")
                     }
                     if let marker {
                         Image(systemName: "scope")
@@ -34,10 +36,12 @@ struct LiDARStudio: View {
                     HStack {
                         Label(model.status, systemImage: model.isRecording ? "record.circle.fill" : "viewfinder")
                             .foregroundStyle(model.isRecording ? Color.red : Color.cyan)
+                            .accessibilityIdentifier("lidar-status")
                         Spacer()
                         if let distance = model.distance {
                             Text("\(distance, specifier: "%.2f") m")
                                 .monospacedDigit()
+                                .accessibilityIdentifier("lidar-distance")
                                 .accessibilityLabel(Text("Distance \(distance, specifier: "%.2f") metres"))
                         }
                     }
